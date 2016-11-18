@@ -1,48 +1,21 @@
-# Benchmarks
-
-Tiny comparison between dlang using Vibe.d, nodejs using express and JRuby with Roda
-
-My point here is to do a benchmark on a real daily use case, such as loading n entries from a DB and showing them as JSON using a normal framework. By normal I mean something that is not too much fancy with early optimisation.
-
-## Sql dump 
-
-1500 entries in a database selecting only 100
-
-All the benchmarks are made with [wrk](https://github.com/wg/wrk)
-
-# Env for all benchmarks
-
-- OS : Fedora 23 x86_64
-- Kernel : 4.6.4-201.fc23.x86_64
-- Computer : Lenovo thinkpad t460s
-
-
-# The bench
-
-Command used : `wrk -t10 -c10 -d10s http://localhost:3000`
-
-- Node : v5.11.0 with express `NODE_ENV=production node app.js`
-- JRuby : JRuby 9.1.2.0 with roda and torquebox `torquebox jar ; java -jar ruby.jar;`
-- Dlang : DMD64 D Compiler v2.071.0 with vibe.d `dub build --config=application --build=release ; ./vibed`
-
-Seconds | Dlang         | Node            | JRuby          |
---------| ------------- |:---------------:|---------------:|
-10s     | Req/Sec 717.65| Req/Sec 284.25  | Req/Sec 298.11 |
-30s     | Req/Sec 632.92| Req/Sec 300.80  | Req/Sec 290.30 |
-1m      | Req/Sec 755.51| Req/Sec 293.72  | Req/Sec 377.86 |
-
-
-## Dlang with ldc compiler
-
-`dub build --config=application --build=release --compiler=ldc2`
-
-10 threads and 10 connections for 1 minute
-
-Stats |  Avg    |  Stdev  | Max     | +/- Stdev
------------|---------|---------|---------|----------
-Latency    |  640.81us |431.47us  | 33.98ms | 96.38%
-Req/Sec    |  1.66k  |103.20   | 1.82k    | 88.50%
+jruby
+- roda
     
-  496744 requests in 1.00m, 827.61MB read
-Requests/sec:   8278.27
-Transfer/sec:     13.79MB
+    ``` Running 1m test @ http://localhost:3000
+        *10* threads and 10 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency     7.59ms    5.76ms 152.57ms   89.64%
+        Req/Sec   142.72     33.05   490.00     73.05%
+        85341 requests in 1.00m, 362.09MB read
+        Requests/sec:   1419.90
+        Transfer/sec:      6.02MB```
+        
+- sinatra
+    ```Running 1m test @ http://localhost:3000
+         10 threads and 10 connections
+         Thread Stats   Avg      Stdev     Max   +/- Stdev
+           Latency     8.40ms    4.91ms  80.74ms   73.76%
+           Req/Sec   123.74     22.25   220.00     65.10%
+         74020 requests in 1.00m, 316.39MB read
+       Requests/sec:   1232.08
+       Transfer/sec:      5.27MB```
